@@ -168,7 +168,7 @@ Frontend *Frontend::GetFrontend(Communicator *c) {
 }
 
 void Frontend::Execute(const char *routine, const Buffer *input_buffer) {
-  // printf("iam execute: %s\n",routine);
+  printf("iam execute: %s\n",routine);
   if (input_buffer == nullptr) input_buffer = mpInputBuffer.get();
   pid_t tid = syscall(SYS_gettid);
   if (mpFrontends->find(tid) != mpFrontends->end()) {
@@ -211,4 +211,18 @@ void Frontend::Prepare() {
   pid_t tid = syscall(SYS_gettid);
   if (this->mpFrontends->find(tid) != mpFrontends->end())
     mpFrontends->find(tid)->second->mpInputBuffer->Reset();
+}
+
+void Frontend::printinfo() {
+  printf("iam printfinfo\n");
+  pid_t tid = syscall(SYS_gettid);
+  if (mpFrontends->find(tid) != mpFrontends->end()) {
+    auto frontend = mpFrontends->find(tid)->second;
+    printf("execute times: %lu\n",frontend->mRoutinesExecuted);
+    printf("sent size: %lu\n",frontend->mDataSent);
+    printf("sending time: %lf\n",frontend->mSendingTime);
+    printf("remote GPU time: %lf\n",frontend->mRoutineExecutionTime);
+    printf("received size: %lu\n", frontend->mDataReceived);
+    printf("receiving time: %lf\n",frontend->mReceivingTime);
+  }
 }
